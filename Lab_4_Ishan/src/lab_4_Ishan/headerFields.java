@@ -10,7 +10,7 @@ import java.net.URLConnection;
 public class headerFields {
     public static void main(String[] args) {
         try {
-            URL url = new URL("http://sajabazaar.com");
+            URL url = new URL("http://kathford.edu.np");
             URLConnection con = url.openConnection();
             // Method 1
             // Map<String,List<String>> contents = con.getHeaderFields();

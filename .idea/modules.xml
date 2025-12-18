@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Lab_2_NP/Lab_2_NP.iml" filepath="$PROJECT_DIR$/Lab_2_NP/Lab_2_NP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lab_3_NP_Ishan/Lab_3_NP_Ishan.iml" filepath="$PROJECT_DIR$/Lab_3_NP_Ishan/Lab_3_NP_Ishan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lab_4_Ishan/Lab_4_Ishan.iml" filepath="$PROJECT_DIR$/Lab_4_Ishan/Lab_4_Ishan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Labs.iml" filepath="$PROJECT_DIR$/.idea/Labs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lab_1_NP_Ishan/lab_1_NP_Ishan.iml" filepath="$PROJECT_DIR$/lab_1_NP_Ishan/lab_1_NP_Ishan.iml" />
+    </modules>
+  </component>
+</project>

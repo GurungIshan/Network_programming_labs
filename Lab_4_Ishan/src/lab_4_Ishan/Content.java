@@ -7,7 +7,7 @@ import java.util.Date;
 public class Content {
     public static void main(String[] args) {
         try {
-            URL url = new URL("https://rabinpyakurel.com.np");
+            URL url = new URL("http://www.example.com");
             URLConnection con = url.openConnection();
             System.out.println(con.getContentType());
             System.out.println(con.getContentLength());
