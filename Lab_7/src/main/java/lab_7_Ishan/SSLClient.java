@@ -1,7 +1,7 @@
-package  lab_7_Ishan;
+package lab_7_Ishan;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.security.KeyStore;
@@ -16,45 +16,43 @@ public class SSLClient {
 
     private static final String HOST = "localhost";
     private static final int PORT = 8888;
-    private static final String TRUSTSTORE_PATH = "client.truststore";
     private static final String TRUSTSTORE_PASSWORD = "ishangrg";
 
     public static void main(String[] args) {
         try {
-            // Load the truststore
             char[] truststorePassword = TRUSTSTORE_PASSWORD.toCharArray();
+
             KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
-            FileInputStream fis = new FileInputStream(TRUSTSTORE_PATH);
+
+            InputStream fis = SSLClient.class
+                    .getClassLoader()
+                    .getResourceAsStream("client.truststore");
+
+            if (fis == null) {
+                throw new RuntimeException("client.truststore not found");
+            }
+
             truststore.load(fis, truststorePassword);
 
-            // Create the trust manager
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(truststore);
-            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+            TrustManagerFactory tmf =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(truststore);
 
-            // Create the SSL context
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustManagers, null);
+            sslContext.init(null, tmf.getTrustManagers(), null);
 
-            // Create the SSL socket factory
-            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            SSLSocketFactory factory = sslContext.getSocketFactory();
+            SSLSocket socket = (SSLSocket) factory.createSocket(HOST, PORT);
 
-            // Create the client socket
-            SSLSocket clientSocket = (SSLSocket) sslSocketFactory.createSocket(HOST, PORT);
+            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+            writer.println("Hello from client!");
 
-            // Send request to server
-            String request = "Hello from client!";
-            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
-            writer.println(request);
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println("Received response: " + reader.readLine());
 
-            // Read response from server
-            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String response = reader.readLine();
+            socket.close();
 
-            System.out.println("Received response: " + response);
-
-            // Close the client socket
-            clientSocket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

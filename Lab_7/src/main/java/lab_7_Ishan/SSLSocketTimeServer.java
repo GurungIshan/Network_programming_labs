@@ -3,6 +3,7 @@ package  lab_7_Ishan;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.KeyStore;
 import java.util.Date;
@@ -25,8 +26,16 @@ public class SSLSocketTimeServer {
             // Load the keystore
             char[] keystorePassword = KEYSTORE_PASSWORD.toCharArray();
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-            FileInputStream fis = new FileInputStream(KEYSTORE_PATH);
+            InputStream fis = SSLSocketTimeServer.class
+                    .getClassLoader()
+                    .getResourceAsStream("server.keystore");
+
+            if (fis == null) {
+                throw new RuntimeException("server.keystore not found in resources");
+            }
+
             keystore.load(fis, keystorePassword);
+
 
             // Create the key manager
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());

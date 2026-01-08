@@ -3,6 +3,7 @@ package  lab_7_Ishan;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.KeyStore;
 
@@ -24,7 +25,14 @@ public class SSLSocketTimeClient {
             // Load the truststore
             char[] truststorePassword = TRUSTSTORE_PASSWORD.toCharArray();
             KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
-            FileInputStream fis = new FileInputStream(TRUSTSTORE_PATH);
+            InputStream fis = SSLSocketTimeClient.class
+                    .getClassLoader()
+                    .getResourceAsStream("client.truststore");
+
+            if (fis == null) {
+                throw new RuntimeException("client.truststore not found in resources");
+            }
+
             truststore.load(fis, truststorePassword);
 
             // Create the trust manager

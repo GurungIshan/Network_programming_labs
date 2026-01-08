@@ -1,10 +1,6 @@
 package  lab_7_Ishan;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.security.KeyStore;
 
 import javax.net.ssl.KeyManager;
@@ -22,36 +18,38 @@ public class SSLServer {
 
     public static void main(String[] args) {
         try {
-            // Load the keystore
             char[] keystorePassword = KEYSTORE_PASSWORD.toCharArray();
+
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-            FileInputStream fis = new FileInputStream(KEYSTORE_PATH);
+
+            InputStream fis = SSLServer.class
+                    .getClassLoader()
+                    .getResourceAsStream("server.keystore");
+
+            if (fis == null) {
+                throw new RuntimeException("server.keystore not found");
+            }
+
             keystore.load(fis, keystorePassword);
 
-            // Create the key manager
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            keyManagerFactory.init(keystore, keystorePassword);
-            KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+            KeyManagerFactory kmf =
+                    KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(keystore, keystorePassword);
 
-            // Create the SSL context
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(keyManagers, null, null);
+            sslContext.init(kmf.getKeyManagers(), null, null);
 
-            // Create the SSL server socket factory
-            SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
+            SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
+            SSLServerSocket serverSocket =
+                    (SSLServerSocket) factory.createServerSocket(PORT);
 
-            // Create the server socket
-            SSLServerSocket serverSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(PORT);
-
-            System.out.println("Server started. Listening on port " + PORT);
+            System.out.println("SSL Server started on port " + PORT);
 
             while (true) {
-                // Accept client connection
-                SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
-
-                // Handle client request
-                handleClientRequest(clientSocket);
+                SSLSocket socket = (SSLSocket) serverSocket.accept();
+                handleClientRequest(socket);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
